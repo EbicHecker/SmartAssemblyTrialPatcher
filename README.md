@@ -1,2 +1,2 @@
-# SmartAssemblyTrialRemover
-A tool used to remove SmartAssembly's trial check.
+# SmartAssemblyTrialPatcher
+A tool used to patch/remove SmartAssembly's trial check.
