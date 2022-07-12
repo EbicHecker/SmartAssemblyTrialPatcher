@@ -25,6 +25,7 @@ foreach (var instruction in (module.ManagedEntrypointMethod?.CilMethodBody ?? th
         };
         
         Console.WriteLine($"patched: {method} - ({method.MetadataToken})");
+        break;
     }
 }
 
