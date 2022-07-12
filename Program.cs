@@ -9,8 +9,11 @@ foreach (var instruction in (module.ManagedEntrypointMethod?.CilMethodBody ?? th
     if (instruction.Operand is CilInstructionLabel
         {
             Instruction:
-            { OpCode.Code: CilCode.Call, Operand: MethodDefinition { Signature: { ReturnsValue: true } signature } method }
-        } && signature.ReturnType == module.CorLibTypeFactory.Boolean && method.CilMethodBody?.LocalVariables.Count is 1)
+            {
+                OpCode.Code: CilCode.Call,
+                Operand: MethodDefinition { Signature: { ReturnsValue: true } signature } method
+            }
+        } && signature.ReturnType == module.CorLibTypeFactory.Boolean && (method.CilMethodBody!.LocalVariables.Count is 1 || method.CilMethodBody!.Instructions.Any(x => x.OpCode.Code is CilCode.Call)))
     {
         method.CilMethodBody = new CilMethodBody(method)
         {
@@ -21,8 +24,9 @@ foreach (var instruction in (module.ManagedEntrypointMethod?.CilMethodBody ?? th
             }
         };
         
-        Console.WriteLine($"removed: {method}");
+        Console.WriteLine($"patched: {method} - ({method.MetadataToken})");
     }
 }
 
-module.Write(args[0].Insert(args[0].Length - 4, "-no_trial"), new ManagedPEImageBuilder(MetadataBuilderFlags.PreserveAll));
+module.Write(args[0].Insert(args[0].Length - 4, "-no_trial"),
+    new ManagedPEImageBuilder(MetadataBuilderFlags.PreserveAll));
